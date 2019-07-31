@@ -1,7 +1,4 @@
 pool:
-  vmImage: 'Ubuntu-16.04'
-  demands:
-    - npm
 
 variables:
   buildConfiguration: 'Release'
@@ -41,6 +38,13 @@ steps:
     command: 'build'
     arguments: '--no-restore --configuration $(buildConfiguration)'
     projects: '**/*.csproj'
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: '05d7eb4d-375e-4444-8f93-59e071048788'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish the project - $(buildConfiguration)'
